@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Resident Information</title>
     <link rel="icon" href="https://mythrisignature.com/wp-content/uploads/2022/12/cropped-Mythri-Signature-Logos-1-192x192.png">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             margin: 0;
@@ -301,26 +302,13 @@
             display: none;
         }
 
-        .signin-banner a {
-            color: #6f42c1;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
         .signin-status {
             margin-left: 8px;
             font-weight: 600;
         }
 
-        .signin-refresh {
-            margin-left: 8px;
-            border: 1px solid #d9c67d;
-            background: #fff6da;
-            color: #6b5700;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
+        #googleSignInButton {
+            margin-top: 8px;
         }
 
         @media (max-width: 600px) {
@@ -392,9 +380,8 @@
         <form id="feedbackForm">
             <div class="signin-banner" id="signinBanner">
                 Please sign in with your Google account to continue.
-                <a id="signinLink" href="#" target="_blank" rel="noopener">Sign in</a>
                 <span class="signin-status" id="signinStatus"></span>
-                <button type="button" class="signin-refresh" id="signinRefresh">Refresh</button>
+                <div id="googleSignInButton"></div>
             </div>
             <div class="form-group">
                 <label>Block <span class="required">*</span></label>
@@ -460,6 +447,7 @@
                        inputmode="email">
                 <div class="inline-note" id="emailNote">Visible only for owners.</div>
             </div>
+            <input type="hidden" id="idToken" name="idToken">
 
             <div id="tenantExtras">
                 <div class="form-group">
@@ -633,17 +621,18 @@
     <script>
         // Replace this with your Google Apps Script Web App URL
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8ycLDHJFxu1Yk-icWizxvWevsrYhG0Uuirl871m7z32SHAgknuYzMY2dt4zZgdodD/exec';
+        const GOOGLE_CLIENT_ID = '243325884082-o0o6j8nrbq45fejs4a2k3tm8o29tkupt.apps.googleusercontent.com';
 
         const form = document.getElementById('feedbackForm');
         const submitBtn = document.getElementById('submitBtn');
         const messageDiv = document.getElementById('message');
         const signinBanner = document.getElementById('signinBanner');
-        const signinLink = document.getElementById('signinLink');
         const signinStatus = document.getElementById('signinStatus');
-        const signinRefresh = document.getElementById('signinRefresh');
+        const googleSignInButton = document.getElementById('googleSignInButton');
         const tenantExtras = document.getElementById('tenantExtras');
         const ownerEmailGroup = document.getElementById('ownerEmailGroup');
         const emailField = document.getElementById('email');
+        const idTokenField = document.getElementById('idToken');
         const emailNote = document.getElementById('emailNote');
         const residentTypeInputs = document.querySelectorAll('input[name="residentType"]');
         const adultsCount = document.getElementById('adultsCount');
@@ -753,25 +742,18 @@
 
         // Require sign-in on load
         window.addEventListener('DOMContentLoaded', () => {
-            signinLink.href = `${SCRIPT_URL}?action=whoami`;
             updateSignInUI();
-            requestWhoami();
-            startSignInPolling();
+            initGoogleSignIn();
         });
 
         let loggedInEmail = '';
-        let signInPollId = null;
-
-        signinRefresh.addEventListener('click', () => {
-            requestWhoami();
-        });
 
         function updateSignInUI() {
-            if (loggedInEmail || emailField.value) {
+            if (loggedInEmail) {
                 signinBanner.style.display = 'none';
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Information';
-                signinStatus.textContent = `Signed in as ${loggedInEmail || emailField.value}`;
+                signinStatus.textContent = `Signed in as ${loggedInEmail}`;
             } else {
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Sign in to Continue';
@@ -779,21 +761,28 @@
                 signinStatus.textContent = '';
             }
         }
-
-        function startSignInPolling() {
-            if (signInPollId) {
+        
+        function initGoogleSignIn() {
+            if (!window.google || !google.accounts || !google.accounts.id) {
+                setTimeout(initGoogleSignIn, 500);
                 return;
             }
-            signInPollId = setInterval(() => {
-                requestWhoami();
-            }, 5000);
-        }
 
-        function stopSignInPolling() {
-            if (signInPollId) {
-                clearInterval(signInPollId);
-                signInPollId = null;
-            }
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse,
+                auto_select: true,
+                cancel_on_tap_outside: false
+            });
+
+            google.accounts.id.renderButton(googleSignInButton, {
+                theme: 'outline',
+                size: 'large',
+                shape: 'pill',
+                width: 240
+            });
+
+            google.accounts.id.prompt();
         }
 
 
@@ -817,6 +806,7 @@
                 residentName: formData.get('residentName') ? formData.get('residentName').trim() : '',
                 mobile: formData.get('mobile') ? formData.get('mobile').trim() : '',
                 email: formData.get('email') ? formData.get('email').trim() : '',
+                idToken: formData.get('idToken') ? formData.get('idToken').trim() : '',
                 ownerName: formData.get('ownerName') ? formData.get('ownerName').trim() : '',
                 ownerMobile: formData.get('ownerMobile') ? formData.get('ownerMobile').trim() : '',
                 adultsCount: formData.get('adultsCount'),
@@ -853,6 +843,7 @@
                 formDataString.append('residentName', data.residentName);
                 formDataString.append('mobile', data.mobile);
                 formDataString.append('email', data.email);
+                formDataString.append('idToken', data.idToken);
                 formDataString.append('ownerName', data.ownerName);
                 formDataString.append('ownerMobile', data.ownerMobile);
                 formDataString.append('adultsCount', data.adultsCount);
@@ -1002,41 +993,36 @@
             return message;
         }
 
-        function requestWhoami() {
-            const existingScript = document.getElementById('whoamiScript');
-            if (existingScript) {
-                existingScript.remove();
+        function handleCredentialResponse(response) {
+            if (!response || !response.credential) {
+                return;
             }
 
-            const script = document.createElement('script');
-            script.id = 'whoamiScript';
-            script.src = `${SCRIPT_URL}?action=whoami&callback=handleWhoami&_=${Date.now()}`;
-            script.onerror = () => {
-                showMessage('Sign-in check failed. Please click Sign in and try Refresh again.', 'error');
-            };
-            document.body.appendChild(script);
-        }
-
-        window.handleWhoami = (result) => {
-            if (result && result.email) {
-                applyLoggedInEmail(result.email);
-                signinBanner.style.display = 'none';
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Information';
-                signinStatus.textContent = `Signed in as ${result.email}`;
+            idTokenField.value = response.credential;
+            const payload = parseJwt(response.credential);
+            if (payload && payload.email) {
+                applyLoggedInEmail(payload.email);
                 updateResidentTypeView();
-                stopSignInPolling();
-            } else {
-                showMessage('Login required. Please sign in with your Google account and try again.', 'error');
-                emailField.readOnly = false;
+                updateSignInUI();
             }
-            updateSignInUI();
-        };
+        }
 
         function applyLoggedInEmail(email) {
             loggedInEmail = email;
             emailField.value = email;
             emailField.readOnly = true;
+        }
+
+        function parseJwt(token) {
+            try {
+                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map((char) => {
+                    return '%' + ('00' + char.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                return null;
+            }
         }
 
         function isLoginPageResponse(rawText, response) {

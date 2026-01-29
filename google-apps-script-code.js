@@ -50,6 +50,7 @@ const SHEET_ID = '1mkUkyKthwilBsrTcadisE8wnhOYLI0GQOk75REq-DNM';
 // IMPORTANT: Change this to match your actual sheet tab name
 // Default Google Sheets use "Sheet1" - check your sheet and update accordingly
 const SHEET_NAME = 'Resident Details'; // Change to your actual tab name
+const GOOGLE_CLIENT_ID = '243325884082-o0o6j8nrbq45fejs4a2k3tm8o29tkupt.apps.googleusercontent.com';
 
 const HEADERS = [
   'S.NO',
@@ -128,7 +129,8 @@ function doPost(e) {
         bikeCount: e.parameter.bikeCount || '',
         bicycleCount: e.parameter.bicycleCount || '',
         electricVehicle: e.parameter.electricVehicle || '',
-        suggestions: e.parameter.suggestions || ''
+        suggestions: e.parameter.suggestions || '',
+        idToken: e.parameter.idToken || ''
       };
     } else {
       // Fallback: try to parse as JSON if postData exists
@@ -140,7 +142,7 @@ function doPost(e) {
     }
     
     // Validate required fields
-    const submittedByEmail = Session.getActiveUser().getEmail();
+    const submittedByEmail = verifyIdToken(data.idToken);
     if (!submittedByEmail) {
       return createResponse({
         success: false,
@@ -293,25 +295,34 @@ function doGet(e) {
       message: 'Script is accessible' 
     });
   }
-
-  if (e.parameter.action === 'whoami') {
-    const submittedByEmail = Session.getActiveUser().getEmail();
-    const payload = {
-      status: 'ok',
-      email: submittedByEmail || ''
-    };
-    if (e.parameter.callback) {
-      return ContentService
-        .createTextOutput(`${e.parameter.callback}(${JSON.stringify(payload)})`)
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
-    }
-    return createResponse(payload);
-  }
   
   return createResponse({ 
     status: 'ok',
     message: 'Community Resident Information API'
   });
+}
+
+function verifyIdToken(idToken) {
+  if (!idToken) {
+    return '';
+  }
+
+  try {
+    const response = UrlFetchApp.fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`);
+    if (response.getResponseCode() !== 200) {
+      return '';
+    }
+    const payload = JSON.parse(response.getContentText());
+    if (payload.aud !== GOOGLE_CLIENT_ID) {
+      return '';
+    }
+    if (payload.email_verified !== 'true' && payload.email_verified !== true) {
+      return '';
+    }
+    return payload.email || '';
+  } catch (error) {
+    return '';
+  }
 }
 
 // Helper function to create JSON response
