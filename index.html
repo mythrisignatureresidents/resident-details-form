@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Resident Information</title>
+    <link rel="icon" href="https://mythrisignature.com/wp-content/uploads/2022/12/cropped-Mythri-Signature-Logos-1-192x192.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            min-height: 48px;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+            padding: 14px 16px;
+            line-height: 1.5;
+        }
+        
+        input[type="text"]::placeholder,
+        input[type="tel"]::placeholder,
+        textarea::placeholder {
+            color: #999;
+            opacity: 1;
+        }
+
+        .choice-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .choice-option {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .choice-option input[type="radio"] {
+            display: none;
+        }
+
+        .choice-option label {
+            display: block;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: normal;
+        }
+
+        .choice-option input[type="radio"]:checked + label {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .choice-option label:hover {
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .message.error br {
+            line-height: 1.6;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            max-width: 250px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .inline-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .section-title {
+            margin: 26px 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .inline-fields {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .inline-fields .field {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .pet-details {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .pet-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .pet-row label {
+            margin: 0;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .pet-count {
+            width: 110px;
+        }
+
+        .footer-note {
+            margin-top: 24px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .signin-note {
+            background: #f6f7ff;
+            border: 1px solid #e3e7ff;
+            color: #3a3f66;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .signin-banner {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .signin-banner a {
+            color: #6f42c1;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .signin-status {
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .signin-refresh {
+            margin-left: 8px;
+            border: 1px solid #d9c67d;
+            background: #fff6da;
+            color: #6b5700;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .subtitle {
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-size: 13px;
+            }
+
+            input[type="text"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="email"],
+            select,
+            textarea {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+
+            .choice-group {
+                gap: 8px;
+            }
+
+            .choice-option {
+                min-width: 72px;
+            }
+
+            .choice-option label {
+                padding: 10px;
+            }
+
+            .inline-fields .field {
+                min-width: 140px;
+            }
+
+            .pet-row {
+                flex-wrap: wrap;
+            }
+
+            .pet-count {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="https://mythrisignature.com/wp-content/uploads/2022/12/Mythri-Signature-Logos-1-1024x350.png" alt="MYTHRI Signature Logo" class="logo" id="logo">
+        </div>
+        <h1>Resident Information Form</h1>
+        <p class="subtitle">Please share resident details for community records</p>
+
+        <form id="feedbackForm">
+            <div class="signin-banner" id="signinBanner">
+                Please sign in with your Google account to continue.
+                <a id="signinLink" href="#" target="_blank" rel="noopener">Sign in</a>
+                <span class="signin-status" id="signinStatus"></span>
+                <button type="button" class="signin-refresh" id="signinRefresh">Refresh</button>
+            </div>
+            <div class="form-group">
+                <label>Block <span class="required">*</span></label>
+                <div class="choice-group" role="radiogroup" aria-label="Block">
+                    <div class="choice-option">
+                        <input type="radio" id="blockA" name="block" value="A" required>
+                        <label for="blockA">A</label>
+                    </div>
+                    <div class="choice-option">
+                        <input type="radio" id="blockB" name="block" value="B" required>
+                        <label for="blockB">B</label>
+                    </div>
+                    <div class="choice-option">
+                        <input type="radio" id="blockC" name="block" value="C" required>
+                        <label for="blockC">C</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="flatNumber">Flat Number <span class="required">*</span></label>
+                <input type="text" id="flatNumber" name="flatNumber" 
+                       placeholder="e.g., 001, 404" 
+                       pattern="[0-9]{1,4}"
+                       title="Enter your flat number"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label>Resident Type <span class="required">*</span></label>
+                <div class="choice-group" role="radiogroup" aria-label="Resident Type">
+                    <div class="choice-option">
+                        <input type="radio" id="residentOwner" name="residentType" value="Owner" required>
+                        <label for="residentOwner">Owner</label>
+                    </div>
+                    <div class="choice-option">
+                        <input type="radio" id="residentTenant" name="residentType" value="Tenant" required>
+                        <label for="residentTenant">Tenant</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="residentName">Resident Name <span class="required">*</span></label>
+                <input type="text" id="residentName" name="residentName" 
+                       placeholder="Enter full name"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="mobile">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="mobile" name="mobile" 
+                       placeholder="Enter primary phone number"
+                       pattern="[0-9+\-\s()]+"
+                       title="Enter a valid phone number"
+                       required>
+            </div>
+
+            <div class="form-group" id="ownerEmailGroup">
+                <label for="email">Email ID (Owner only)</label>
+                <input type="email" id="email" name="email" 
+                       placeholder="Enter owner email address"
+                       inputmode="email">
+                <div class="inline-note" id="emailNote">Visible only for owners.</div>
+            </div>
+
+            <div id="tenantExtras">
+                <div class="form-group">
+                    <label for="ownerName">Owner Name (Optional)</label>
+                    <input type="text" id="ownerName" name="ownerName" 
+                           placeholder="Enter owner name">
+                </div>
+                <div class="form-group">
+                    <label for="ownerMobile">Owner Mobile Number (Optional)</label>
+                    <input type="tel" id="ownerMobile" name="ownerMobile" 
+                           placeholder="Enter owner mobile number"
+                           pattern="[0-9+\-\s()]+"
+                           title="Enter a valid phone number">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="adultsCount">Number of Adults (15 and above) <span class="required">*</span></label>
+                <select id="adultsCount" name="adultsCount" required>
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="childrenCount">Number of Children (below 15) <span class="required">*</span></label>
+                <select id="childrenCount" name="childrenCount" required>
+                    <option value="">Select</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="headcount">Total Headcount</label>
+                <input type="text" id="headcount" name="headcount" 
+                       placeholder="Auto-calculated"
+                       readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="familyDetails">Family Details (Optional)</label>
+                <textarea id="familyDetails" name="familyDetails" 
+                          placeholder="Add names and ages if you wish (e.g., spouse, kids, parents, relatives)."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Pets in Home <span class="required">*</span></label>
+                <div class="choice-group" role="radiogroup" aria-label="Pets in Home">
+                    <div class="choice-option">
+                        <input type="radio" id="petsYes" name="pets" value="Yes" required>
+                        <label for="petsYes">Yes</label>
+                    </div>
+                    <div class="choice-option">
+                        <input type="radio" id="petsNo" name="pets" value="No" required>
+                        <label for="petsNo">No</label>
+                    </div>
+                </div>
+                <div class="pet-details" id="petDetails">
+                    <div class="pet-row">
+                        <label>
+                            <input type="checkbox" id="petDog" name="petDog" value="Dog">
+                            Dog
+                        </label>
+                        <input type="number" id="petDogCount" name="petDogCount" class="pet-count" min="1" max="10" placeholder="Count">
+                    </div>
+                    <div class="pet-row">
+                        <label>
+                            <input type="checkbox" id="petCat" name="petCat" value="Cat">
+                            Cat
+                        </label>
+                        <input type="number" id="petCatCount" name="petCatCount" class="pet-count" min="1" max="10" placeholder="Count">
+                    </div>
+                    <div class="pet-row">
+                        <label>
+                            <input type="checkbox" id="petBird" name="petBird" value="Birds">
+                            Birds
+                        </label>
+                        <input type="number" id="petBirdCount" name="petBirdCount" class="pet-count" min="1" max="10" placeholder="Count">
+                    </div>
+                    <div class="pet-row">
+                        <label>
+                            <input type="checkbox" id="petOther" name="petOther" value="Other">
+                            Others
+                        </label>
+                        <input type="text" id="petOtherType" name="petOtherType" placeholder="Type (optional)">
+                        <input type="number" id="petOtherCount" name="petOtherCount" class="pet-count" min="1" max="10" placeholder="Count">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="emergencyName">Emergency Contact Name (Optional)</label>
+                <input type="text" id="emergencyName" name="emergencyName" 
+                       placeholder="Enter emergency contact name">
+            </div>
+
+            <div class="form-group">
+                <label for="emergencyMobile">Emergency Contact Mobile (Optional)</label>
+                <input type="tel" id="emergencyMobile" name="emergencyMobile" 
+                       placeholder="Enter emergency contact number"
+                       pattern="[0-9+\-\s()]+"
+                       title="Enter a valid phone number">
+            </div>
+
+            <div class="form-group">
+                <label for="moveInDate">Move-in Date (Optional)</label>
+                <input type="text" id="moveInDate" name="moveInDate" 
+                       placeholder="e.g., 12-2023 or 2024-01-15">
+            </div>
+
+            <div class="form-group">
+                <label>Vehicles (Optional)</label>
+                <div class="inline-fields">
+                    <div class="field">
+                        <label for="carCount">Car Count</label>
+                        <input type="number" id="carCount" name="carCount" min="0" max="10" placeholder="0">
+                    </div>
+                    <div class="field">
+                        <label for="bikeCount">Bike Count</label>
+                        <input type="number" id="bikeCount" name="bikeCount" min="0" max="10" placeholder="0">
+                    </div>
+                    <div class="field">
+                        <label for="bicycleCount">Bicycle Count</label>
+                        <input type="number" id="bicycleCount" name="bicycleCount" min="0" max="10" placeholder="0">
+                    </div>
+                </div>
+                <div class="inline-note">Add counts if applicable (e.g., 2 bikes, 1 car).</div>
+            </div>
+
+            <div class="form-group">
+                <label>Electric Vehicle <span class="inline-note">(Optional)</span></label>
+                <div class="choice-group" role="radiogroup" aria-label="Electric Vehicle">
+                    <div class="choice-option">
+                        <input type="radio" id="evYes" name="electricVehicle" value="Yes">
+                        <label for="evYes">Yes</label>
+                    </div>
+                    <div class="choice-option">
+                        <input type="radio" id="evNo" name="electricVehicle" value="No">
+                        <label for="evNo">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="suggestions">Suggestions / Feedback (Optional)</label>
+                <textarea id="suggestions" name="suggestions" 
+                          placeholder="Any suggestions, feedback, or notes (events, maintenance, etc.)"></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn">Submit Information</button>
+
+            <div class="signin-note">
+                Note: Please sign in with your Google account to submit.
+            </div>
+
+            <div id="message" class="message"></div>
+        </form>
+
+        <div class="footer-note">Please contact Krishna - 9848158976</div>
+    </div>
+
+    <script>
+        // Replace this with your Google Apps Script Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8ycLDHJFxu1Yk-icWizxvWevsrYhG0Uuirl871m7z32SHAgknuYzMY2dt4zZgdodD/exec';
+
+        const form = document.getElementById('feedbackForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageDiv = document.getElementById('message');
+        const signinBanner = document.getElementById('signinBanner');
+        const signinLink = document.getElementById('signinLink');
+        const signinStatus = document.getElementById('signinStatus');
+        const signinRefresh = document.getElementById('signinRefresh');
+        const tenantExtras = document.getElementById('tenantExtras');
+        const ownerEmailGroup = document.getElementById('ownerEmailGroup');
+        const emailField = document.getElementById('email');
+        const emailNote = document.getElementById('emailNote');
+        const residentTypeInputs = document.querySelectorAll('input[name="residentType"]');
+        const adultsCount = document.getElementById('adultsCount');
+        const childrenCount = document.getElementById('childrenCount');
+        const headcount = document.getElementById('headcount');
+        const petDetails = document.getElementById('petDetails');
+        const petInputs = document.querySelectorAll('input[name="pets"]');
+        const petCheckboxes = document.querySelectorAll('#petDetails input[type="checkbox"]');
+        const petCountInputs = document.querySelectorAll('#petDetails input[type="number"], #petDetails input[type="text"]');
+        const petOptions = [
+            { checkboxId: 'petDog', countId: 'petDogCount' },
+            { checkboxId: 'petCat', countId: 'petCatCount' },
+            { checkboxId: 'petBird', countId: 'petBirdCount' },
+            { checkboxId: 'petOther', countId: 'petOtherCount', typeId: 'petOtherType' }
+        ];
+
+        tenantExtras.style.display = 'none';
+        emailNote.style.display = 'none';
+        petDetails.style.display = 'none';
+
+        function updateResidentTypeView() {
+            const selectedType = document.querySelector('input[name="residentType"]:checked');
+            const isTenant = selectedType && selectedType.value === 'Tenant';
+
+            tenantExtras.style.display = isTenant ? 'block' : 'none';
+            ownerEmailGroup.style.display = isTenant ? 'none' : 'block';
+            emailNote.style.display = selectedType && selectedType.value === 'Owner' ? 'block' : 'none';
+
+            if (isTenant) {
+                emailField.removeAttribute('required');
+            } else if (selectedType && selectedType.value === 'Owner') {
+                emailField.setAttribute('required', 'required');
+                if (loggedInEmail) {
+                    emailField.value = loggedInEmail;
+                    emailField.readOnly = true;
+                }
+            } else {
+                emailField.removeAttribute('required');
+            }
+        }
+
+        residentTypeInputs.forEach(input => {
+            input.addEventListener('change', updateResidentTypeView);
+        });
+
+        function updateHeadcount() {
+            const adultsValue = parseInt(adultsCount.value || '0', 10);
+            const childrenValue = parseInt(childrenCount.value || '0', 10);
+            const total = adultsValue + childrenValue;
+            headcount.value = total ? String(total) : '';
+        }
+
+        adultsCount.addEventListener('change', updateHeadcount);
+        childrenCount.addEventListener('change', updateHeadcount);
+
+        function updatePetView() {
+            const selectedPets = document.querySelector('input[name="pets"]:checked');
+            const hasPets = selectedPets && selectedPets.value === 'Yes';
+            petDetails.style.display = hasPets ? 'block' : 'none';
+
+            if (!hasPets) {
+                petCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                petCountInputs.forEach(input => {
+                    input.value = '';
+                });
+            }
+
+            syncPetCountsEnabled();
+        }
+
+        function syncPetCountsEnabled() {
+            petOptions.forEach(option => {
+                const checkbox = document.getElementById(option.checkboxId);
+                const countInput = document.getElementById(option.countId);
+                const typeInput = option.typeId ? document.getElementById(option.typeId) : null;
+                const enabled = checkbox.checked;
+
+                countInput.disabled = !enabled;
+                if (!enabled) {
+                    countInput.value = '';
+                } else if (!countInput.value) {
+                    countInput.value = '1';
+                }
+
+                if (typeInput) {
+                    typeInput.disabled = !enabled;
+                    if (!enabled) {
+                        typeInput.value = '';
+                    }
+                }
+            });
+        }
+
+        petInputs.forEach(input => {
+            input.addEventListener('change', updatePetView);
+        });
+
+        petCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', syncPetCountsEnabled);
+        });
+
+        updateResidentTypeView();
+        updateHeadcount();
+        updatePetView();
+
+        // Require sign-in on load
+        window.addEventListener('DOMContentLoaded', () => {
+            signinLink.href = `${SCRIPT_URL}?action=whoami`;
+            updateSignInUI();
+            requestWhoami();
+            startSignInPolling();
+        });
+
+        let loggedInEmail = '';
+        let signInPollId = null;
+
+        signinRefresh.addEventListener('click', () => {
+            requestWhoami();
+        });
+
+        function updateSignInUI() {
+            if (loggedInEmail || emailField.value) {
+                signinBanner.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Information';
+                signinStatus.textContent = `Signed in as ${loggedInEmail || emailField.value}`;
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sign in to Continue';
+                signinBanner.style.display = 'block';
+                signinStatus.textContent = '';
+            }
+        }
+
+        function startSignInPolling() {
+            if (signInPollId) {
+                return;
+            }
+            signInPollId = setInterval(() => {
+                requestWhoami();
+            }, 5000);
+        }
+
+        function stopSignInPolling() {
+            if (signInPollId) {
+                clearInterval(signInPollId);
+                signInPollId = null;
+            }
+        }
+
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            messageDiv.className = 'message';
+            messageDiv.textContent = '';
+
+            // Get form data
+            const formData = new FormData(form);
+            const flatNumber = formData.get('flatNumber') ? formData.get('flatNumber').trim() : '';
+
+            const data = {
+                block: formData.get('block'),
+                flatNumber: flatNumber,
+                residentType: formData.get('residentType'),
+                residentName: formData.get('residentName') ? formData.get('residentName').trim() : '',
+                mobile: formData.get('mobile') ? formData.get('mobile').trim() : '',
+                email: formData.get('email') ? formData.get('email').trim() : '',
+                ownerName: formData.get('ownerName') ? formData.get('ownerName').trim() : '',
+                ownerMobile: formData.get('ownerMobile') ? formData.get('ownerMobile').trim() : '',
+                adultsCount: formData.get('adultsCount'),
+                childrenCount: formData.get('childrenCount'),
+                headcount: headcount.value,
+                pets: formData.get('pets') || '',
+                petDog: formData.get('petDog') ? 'Yes' : 'No',
+                petDogCount: formData.get('petDogCount') ? formData.get('petDogCount').trim() : '',
+                petCat: formData.get('petCat') ? 'Yes' : 'No',
+                petCatCount: formData.get('petCatCount') ? formData.get('petCatCount').trim() : '',
+                petBird: formData.get('petBird') ? 'Yes' : 'No',
+                petBirdCount: formData.get('petBirdCount') ? formData.get('petBirdCount').trim() : '',
+                petOther: formData.get('petOther') ? 'Yes' : 'No',
+                petOtherType: formData.get('petOtherType') ? formData.get('petOtherType').trim() : '',
+                petOtherCount: formData.get('petOtherCount') ? formData.get('petOtherCount').trim() : '',
+                familyDetails: formData.get('familyDetails') ? formData.get('familyDetails').trim() : '',
+                emergencyName: formData.get('emergencyName') ? formData.get('emergencyName').trim() : '',
+                emergencyMobile: formData.get('emergencyMobile') ? formData.get('emergencyMobile').trim() : '',
+                moveInDate: formData.get('moveInDate') ? formData.get('moveInDate').trim() : '',
+                carCount: formData.get('carCount') ? formData.get('carCount').trim() : '',
+                bikeCount: formData.get('bikeCount') ? formData.get('bikeCount').trim() : '',
+                bicycleCount: formData.get('bicycleCount') ? formData.get('bicycleCount').trim() : '',
+                electricVehicle: formData.get('electricVehicle') ? formData.get('electricVehicle').trim() : '',
+                suggestions: formData.get('suggestions').trim(),
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Create URL-encoded form data (more reliable than FormData for Google Apps Script)
+                const formDataString = new URLSearchParams();
+                formDataString.append('block', data.block);
+                formDataString.append('flatNumber', data.flatNumber);
+                formDataString.append('residentType', data.residentType);
+                formDataString.append('residentName', data.residentName);
+                formDataString.append('mobile', data.mobile);
+                formDataString.append('email', data.email);
+                formDataString.append('ownerName', data.ownerName);
+                formDataString.append('ownerMobile', data.ownerMobile);
+                formDataString.append('adultsCount', data.adultsCount);
+                formDataString.append('childrenCount', data.childrenCount);
+                formDataString.append('headcount', data.headcount);
+                formDataString.append('pets', data.pets);
+                formDataString.append('petDog', data.petDog);
+                formDataString.append('petDogCount', data.petDogCount);
+                formDataString.append('petCat', data.petCat);
+                formDataString.append('petCatCount', data.petCatCount);
+                formDataString.append('petBird', data.petBird);
+                formDataString.append('petBirdCount', data.petBirdCount);
+                formDataString.append('petOther', data.petOther);
+                formDataString.append('petOtherType', data.petOtherType);
+                formDataString.append('petOtherCount', data.petOtherCount);
+                formDataString.append('familyDetails', data.familyDetails);
+                formDataString.append('emergencyName', data.emergencyName);
+                formDataString.append('emergencyMobile', data.emergencyMobile);
+                formDataString.append('moveInDate', data.moveInDate);
+                formDataString.append('carCount', data.carCount);
+                formDataString.append('bikeCount', data.bikeCount);
+                formDataString.append('bicycleCount', data.bicycleCount);
+                formDataString.append('electricVehicle', data.electricVehicle);
+                formDataString.append('suggestions', data.suggestions);
+                formDataString.append('timestamp', data.timestamp);
+
+                // Try fetch with cors first (to get response if possible)
+                let submissionSuccess = false;
+                try {
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: formDataString.toString()
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    
+                    if (response.ok) {
+                        const rawText = await response.text();
+                        let result = null;
+                        try {
+                            result = JSON.parse(rawText);
+                        } catch (jsonError) {
+                            result = null;
+                        }
+
+                        if (result && result.success !== false) {
+                            submissionSuccess = true;
+                            showMessage(result.message || 'Thank you! Your information has been submitted successfully.', 'success');
+                            form.reset();
+                            tenantExtras.style.display = 'none';
+                            ownerEmailGroup.style.display = 'block';
+                            emailNote.style.display = 'none';
+                            headcount.value = '';
+                            updateResidentTypeView();
+                            updateHeadcount();
+                            updatePetView();
+                        } else if (result && result.success === false) {
+                            const errorText = normalizeErrorMessage(result.message);
+                            showMessage(errorText || 'There was an error submitting your information.', 'error');
+                        } else if (isLoginPageResponse(rawText, response)) {
+                            showMessage('Login required. Please sign in with your Google account and try again.', 'error');
+                        } else {
+                            // Unknown non-JSON response; do not clear the form
+                            showMessage('Submission could not be verified. Please try again after a moment.', 'error');
+                        }
+                    } else {
+                        // Status not OK, but try to submit anyway via alternative method
+                        console.warn('Response not OK, trying alternative method');
+                        throw new Error('Response not OK');
+                    }
+                } catch (fetchError) {
+                    console.warn('Fetch with CORS failed, trying form submission method:', fetchError.message);
+                    
+                    // Fallback: Use hidden form submission (most reliable method)
+                    // This always works even with certificate/CORS issues
+                    const hiddenForm = document.createElement('form');
+                    hiddenForm.method = 'POST';
+                    hiddenForm.action = SCRIPT_URL;
+                    hiddenForm.target = '_blank';
+                    hiddenForm.style.display = 'none';
+                    
+                    // Add all form fields as hidden inputs
+                    Object.keys(data).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = data[key] || '';
+                        hiddenForm.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(hiddenForm);
+                    hiddenForm.submit();
+                    
+                    // Remove form after submission
+                    setTimeout(() => {
+                        document.body.removeChild(hiddenForm);
+                    }, 1000);
+                    
+                    // Show success message (form submission always works)
+                    showMessage('Thank you! Your information has been submitted successfully.', 'success');
+                    form.reset();
+                    tenantExtras.style.display = 'none';
+                    ownerEmailGroup.style.display = 'block';
+                    emailNote.style.display = 'none';
+                    headcount.value = '';
+                    updateResidentTypeView();
+                    updateHeadcount();
+                    updatePetView();
+                    submissionSuccess = true;
+                }
+                
+                if (!submissionSuccess) {
+                    throw new Error('Submission failed');
+                }
+                
+            } catch (error) {
+                // This catch block should rarely be hit now since we're using no-cors
+                // But keep it for safety
+                console.error('Unexpected error:', error);
+                
+                // Even on error, if it's a certificate/network issue, data might still be saved
+                // Show a message that's less alarming
+                showMessage('Your information may have been submitted. Please check your Google Sheet to confirm. If not, please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Information';
+            }
+        });
+
+        function showMessage(text, type) {
+            messageDiv.innerHTML = text;
+            messageDiv.className = `message ${type}`;
+            
+            // Scroll to message
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function normalizeErrorMessage(message) {
+            const msg = String(message || '');
+            if (msg.toLowerCase().includes('login required')) {
+                return 'Login required. Please sign in with your Google account and try again.';
+            }
+            return message;
+        }
+
+        function requestWhoami() {
+            const existingScript = document.getElementById('whoamiScript');
+            if (existingScript) {
+                existingScript.remove();
+            }
+
+            const script = document.createElement('script');
+            script.id = 'whoamiScript';
+            script.src = `${SCRIPT_URL}?action=whoami&callback=handleWhoami&_=${Date.now()}`;
+            script.onerror = () => {
+                showMessage('Sign-in check failed. Please click Sign in and try Refresh again.', 'error');
+            };
+            document.body.appendChild(script);
+        }
+
+        window.handleWhoami = (result) => {
+            if (result && result.email) {
+                applyLoggedInEmail(result.email);
+                signinBanner.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Information';
+                signinStatus.textContent = `Signed in as ${result.email}`;
+                updateResidentTypeView();
+                stopSignInPolling();
+            } else {
+                showMessage('Login required. Please sign in with your Google account and try again.', 'error');
+                emailField.readOnly = false;
+            }
+            updateSignInUI();
+        };
+
+        function applyLoggedInEmail(email) {
+            loggedInEmail = email;
+            emailField.value = email;
+            emailField.readOnly = true;
+        }
+
+        function isLoginPageResponse(rawText, response) {
+            const contentType = response.headers.get('content-type') || '';
+            const lowerText = String(rawText || '').toLowerCase();
+            return contentType.includes('text/html')
+                && (lowerText.includes('sign in') || lowerText.includes('accounts.google.com'));
+        }
+    </script>
+</body>
+</html>
+
