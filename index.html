@@ -441,11 +441,10 @@
             </div>
 
             <div class="form-group" id="ownerEmailGroup">
-                <label for="email">Email ID (Owner only)</label>
+                <label for="email">Email ID</label>
                 <input type="email" id="email" name="email" 
-                       placeholder="Enter owner email address"
+                       placeholder="Enter email address"
                        inputmode="email">
-                <div class="inline-note" id="emailNote">Visible only for owners.</div>
             </div>
             <input type="hidden" id="idToken" name="idToken">
 
@@ -633,7 +632,6 @@
         const ownerEmailGroup = document.getElementById('ownerEmailGroup');
         const emailField = document.getElementById('email');
         const idTokenField = document.getElementById('idToken');
-        const emailNote = document.getElementById('emailNote');
         const residentTypeInputs = document.querySelectorAll('input[name="residentType"]');
         const adultsCount = document.getElementById('adultsCount');
         const childrenCount = document.getElementById('childrenCount');
@@ -650,7 +648,6 @@
         ];
 
         tenantExtras.style.display = 'none';
-        emailNote.style.display = 'none';
         petDetails.style.display = 'none';
 
         function updateResidentTypeView() {
@@ -659,7 +656,6 @@
 
             tenantExtras.style.display = isTenant ? 'block' : 'none';
             ownerEmailGroup.style.display = isTenant ? 'none' : 'block';
-            emailNote.style.display = selectedType && selectedType.value === 'Owner' ? 'block' : 'none';
 
             if (isTenant) {
                 emailField.removeAttribute('required');
@@ -798,6 +794,14 @@
             // Get form data
             const formData = new FormData(form);
             const flatNumber = formData.get('flatNumber') ? formData.get('flatNumber').trim() : '';
+            const idToken = formData.get('idToken') ? formData.get('idToken').trim() : '';
+
+            if (!idToken) {
+                showMessage('Please sign in with Google before submitting.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Information';
+                return;
+            }
 
             const data = {
                 block: formData.get('block'),
@@ -806,7 +810,7 @@
                 residentName: formData.get('residentName') ? formData.get('residentName').trim() : '',
                 mobile: formData.get('mobile') ? formData.get('mobile').trim() : '',
                 email: formData.get('email') ? formData.get('email').trim() : '',
-                idToken: formData.get('idToken') ? formData.get('idToken').trim() : '',
+                idToken: idToken,
                 ownerName: formData.get('ownerName') ? formData.get('ownerName').trim() : '',
                 ownerMobile: formData.get('ownerMobile') ? formData.get('ownerMobile').trim() : '',
                 adultsCount: formData.get('adultsCount'),
@@ -899,7 +903,6 @@
                             form.reset();
                             tenantExtras.style.display = 'none';
                             ownerEmailGroup.style.display = 'block';
-                            emailNote.style.display = 'none';
                             headcount.value = '';
                             updateResidentTypeView();
                             updateHeadcount();
@@ -919,44 +922,8 @@
                         throw new Error('Response not OK');
                     }
                 } catch (fetchError) {
-                    console.warn('Fetch with CORS failed, trying form submission method:', fetchError.message);
-                    
-                    // Fallback: Use hidden form submission (most reliable method)
-                    // This always works even with certificate/CORS issues
-                    const hiddenForm = document.createElement('form');
-                    hiddenForm.method = 'POST';
-                    hiddenForm.action = SCRIPT_URL;
-                    hiddenForm.target = '_blank';
-                    hiddenForm.style.display = 'none';
-                    
-                    // Add all form fields as hidden inputs
-                    Object.keys(data).forEach(key => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = data[key] || '';
-                        hiddenForm.appendChild(input);
-                    });
-                    
-                    document.body.appendChild(hiddenForm);
-                    hiddenForm.submit();
-                    
-                    // Remove form after submission
-                    setTimeout(() => {
-                        document.body.removeChild(hiddenForm);
-                    }, 1000);
-                    
-                    // Show success message (form submission always works)
-                    showMessage('Thank you! Your information has been submitted successfully.', 'success');
-                    form.reset();
-                    tenantExtras.style.display = 'none';
-                    ownerEmailGroup.style.display = 'block';
-                    emailNote.style.display = 'none';
-                    headcount.value = '';
-                    updateResidentTypeView();
-                    updateHeadcount();
-                    updatePetView();
-                    submissionSuccess = true;
+                    console.warn('Submission failed:', fetchError.message);
+                    showMessage('Submission failed. Please sign in and try again.', 'error');
                 }
                 
                 if (!submissionSuccess) {
