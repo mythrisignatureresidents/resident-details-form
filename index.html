@@ -796,13 +796,6 @@
             const flatNumber = formData.get('flatNumber') ? formData.get('flatNumber').trim() : '';
             const idToken = formData.get('idToken') ? formData.get('idToken').trim() : '';
 
-            if (!idToken) {
-                showMessage('Please sign in with Google before submitting.', 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Information';
-                return;
-            }
-
             const data = {
                 block: formData.get('block'),
                 flatNumber: flatNumber,
