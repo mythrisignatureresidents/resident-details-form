@@ -450,12 +450,12 @@
 
             <div id="tenantExtras">
                 <div class="form-group">
-                    <label for="ownerName">Owner Name (Optional)</label>
+                    <label for="ownerName">Owner Name <span class="required">*</span></label>
                     <input type="text" id="ownerName" name="ownerName" 
                            placeholder="Enter owner name">
                 </div>
                 <div class="form-group">
-                    <label for="ownerMobile">Owner Mobile Number (Optional)</label>
+                    <label for="ownerMobile">Owner Mobile Number <span class="required">*</span></label>
                     <input type="tel" id="ownerMobile" name="ownerMobile" 
                            placeholder="Enter owner mobile number"
                            pattern="[0-9+() -]+"
@@ -567,19 +567,19 @@
             </div>
 
             <div class="form-group">
-                <label>Vehicles (Optional)</label>
+                <label>Vehicles <span class="required">*</span></label>
                 <div class="inline-fields">
                     <div class="field">
                         <label for="carCount">Car Count</label>
-                        <input type="number" id="carCount" name="carCount" min="0" max="10" placeholder="0">
+                        <input type="number" id="carCount" name="carCount" min="0" max="10" placeholder="0" required>
                     </div>
                     <div class="field">
                         <label for="bikeCount">Bike Count</label>
-                        <input type="number" id="bikeCount" name="bikeCount" min="0" max="10" placeholder="0">
+                        <input type="number" id="bikeCount" name="bikeCount" min="0" max="10" placeholder="0" required>
                     </div>
                     <div class="field">
                         <label for="bicycleCount">Bicycle Count</label>
-                        <input type="number" id="bicycleCount" name="bicycleCount" min="0" max="10" placeholder="0">
+                        <input type="number" id="bicycleCount" name="bicycleCount" min="0" max="10" placeholder="0" required>
                     </div>
                 </div>
                 <div class="inline-note">Add counts if applicable (e.g., 2 bikes, 1 car).</div>
@@ -659,14 +659,20 @@
 
             if (isTenant) {
                 emailField.removeAttribute('required');
+                document.getElementById('ownerName').setAttribute('required', 'required');
+                document.getElementById('ownerMobile').setAttribute('required', 'required');
             } else if (selectedType && selectedType.value === 'Owner') {
                 emailField.setAttribute('required', 'required');
                 if (loggedInEmail) {
                     emailField.value = loggedInEmail;
                     emailField.readOnly = true;
                 }
+                document.getElementById('ownerName').removeAttribute('required');
+                document.getElementById('ownerMobile').removeAttribute('required');
             } else {
                 emailField.removeAttribute('required');
+                document.getElementById('ownerName').removeAttribute('required');
+                document.getElementById('ownerMobile').removeAttribute('required');
             }
         }
 
