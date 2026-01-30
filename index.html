@@ -496,9 +496,9 @@
             </div>
 
             <div class="form-group">
-                <label for="familyDetails">Family Details (Optional)</label>
+                <label for="familyDetails">Family Details</label>
                 <textarea id="familyDetails" name="familyDetails" 
-                          placeholder="Add names and ages if you wish (e.g., spouse, kids, parents, relatives)."></textarea>
+                          placeholder="Add Name, Age and Gender of Kids"></textarea>
             </div>
 
             <div class="form-group">
@@ -561,7 +561,7 @@
             </div>
 
             <div class="form-group">
-                <label for="moveInDate">Move-in Date (Optional)</label>
+                <label for="moveInDate">Move-in Date (Optional) or Expected Date to Move-in</label>
                 <input type="text" id="moveInDate" name="moveInDate" 
                        placeholder="e.g., 12-2023 or 2024-01-15">
             </div>
@@ -655,7 +655,7 @@
             const isTenant = selectedType && selectedType.value === 'Tenant';
 
             tenantExtras.style.display = isTenant ? 'block' : 'none';
-            ownerEmailGroup.style.display = isTenant ? 'none' : 'block';
+            ownerEmailGroup.style.display = 'block';
 
             if (isTenant) {
                 emailField.removeAttribute('required');
