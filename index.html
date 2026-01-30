@@ -435,7 +435,7 @@
                 <label for="mobile">Phone Number <span class="required">*</span></label>
                 <input type="tel" id="mobile" name="mobile" 
                        placeholder="Enter primary phone number"
-                       pattern="[0-9+\-\s()]+"
+                       pattern="[0-9+() -]+"
                        title="Enter a valid phone number"
                        required>
             </div>
@@ -458,7 +458,7 @@
                     <label for="ownerMobile">Owner Mobile Number (Optional)</label>
                     <input type="tel" id="ownerMobile" name="ownerMobile" 
                            placeholder="Enter owner mobile number"
-                           pattern="[0-9+\-\s()]+"
+                           pattern="[0-9+() -]+"
                            title="Enter a valid phone number">
                 </div>
             </div>
@@ -556,7 +556,7 @@
                 <label for="emergencyMobile">Emergency Contact Mobile (Optional)</label>
                 <input type="tel" id="emergencyMobile" name="emergencyMobile" 
                        placeholder="Enter emergency contact number"
-                       pattern="[0-9+\-\s()]+"
+                       pattern="[0-9+() -]+"
                        title="Enter a valid phone number">
             </div>
 
@@ -839,105 +839,38 @@
             };
 
             try {
-                // Create URL-encoded form data (more reliable than FormData for Google Apps Script)
-                const formDataString = new URLSearchParams();
-                formDataString.append('block', data.block);
-                formDataString.append('flatNumber', data.flatNumber);
-                formDataString.append('residentType', data.residentType);
-                formDataString.append('residentName', data.residentName);
-                formDataString.append('mobile', data.mobile);
-                formDataString.append('email', data.email);
-                formDataString.append('idToken', data.idToken);
-                formDataString.append('ownerName', data.ownerName);
-                formDataString.append('ownerMobile', data.ownerMobile);
-                formDataString.append('adultsCount', data.adultsCount);
-                formDataString.append('childrenCount', data.childrenCount);
-                formDataString.append('headcount', data.headcount);
-                formDataString.append('pets', data.pets);
-                formDataString.append('petDog', data.petDog);
-                formDataString.append('petDogCount', data.petDogCount);
-                formDataString.append('petCat', data.petCat);
-                formDataString.append('petCatCount', data.petCatCount);
-                formDataString.append('petBird', data.petBird);
-                formDataString.append('petBirdCount', data.petBirdCount);
-                formDataString.append('petOther', data.petOther);
-                formDataString.append('petOtherType', data.petOtherType);
-                formDataString.append('petOtherCount', data.petOtherCount);
-                formDataString.append('familyDetails', data.familyDetails);
-                formDataString.append('emergencyName', data.emergencyName);
-                formDataString.append('emergencyMobile', data.emergencyMobile);
-                formDataString.append('moveInDate', data.moveInDate);
-                formDataString.append('carCount', data.carCount);
-                formDataString.append('bikeCount', data.bikeCount);
-                formDataString.append('bicycleCount', data.bicycleCount);
-                formDataString.append('electricVehicle', data.electricVehicle);
-                formDataString.append('suggestions', data.suggestions);
-                formDataString.append('timestamp', data.timestamp);
+                const hiddenForm = document.createElement('form');
+                hiddenForm.method = 'POST';
+                hiddenForm.action = SCRIPT_URL;
+                hiddenForm.target = '_blank';
+                hiddenForm.style.display = 'none';
 
-                // Try fetch with cors first (to get response if possible)
-                let submissionSuccess = false;
-                try {
-                    const response = await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'cors',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: formDataString.toString()
-                    });
-                    
-                    console.log('Response status:', response.status);
-                    
-                    if (response.ok) {
-                        const rawText = await response.text();
-                        let result = null;
-                        try {
-                            result = JSON.parse(rawText);
-                        } catch (jsonError) {
-                            result = null;
-                        }
+                Object.keys(data).forEach(key => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = data[key] || '';
+                    hiddenForm.appendChild(input);
+                });
 
-                        if (result && result.success !== false) {
-                            submissionSuccess = true;
-                            showMessage(result.message || 'Thank you! Your information has been submitted successfully.', 'success');
-                            form.reset();
-                            tenantExtras.style.display = 'none';
-                            ownerEmailGroup.style.display = 'block';
-                            headcount.value = '';
-                            updateResidentTypeView();
-                            updateHeadcount();
-                            updatePetView();
-                        } else if (result && result.success === false) {
-                            const errorText = normalizeErrorMessage(result.message);
-                            showMessage(errorText || 'There was an error submitting your information.', 'error');
-                        } else if (isLoginPageResponse(rawText, response)) {
-                            showMessage('Login required. Please sign in with your Google account and try again.', 'error');
-                        } else {
-                            // Unknown non-JSON response; do not clear the form
-                            showMessage('Submission could not be verified. Please try again after a moment.', 'error');
-                        }
-                    } else {
-                        // Status not OK, but try to submit anyway via alternative method
-                        console.warn('Response not OK, trying alternative method');
-                        throw new Error('Response not OK');
-                    }
-                } catch (fetchError) {
-                    console.warn('Submission failed:', fetchError.message);
-                    showMessage('Submission failed. Please sign in and try again.', 'error');
-                }
-                
-                if (!submissionSuccess) {
-                    throw new Error('Submission failed');
-                }
-                
+                document.body.appendChild(hiddenForm);
+                hiddenForm.submit();
+
+                setTimeout(() => {
+                    document.body.removeChild(hiddenForm);
+                }, 1000);
+
+                showMessage('Thank you! Your information has been submitted successfully.', 'success');
+                form.reset();
+                tenantExtras.style.display = 'none';
+                ownerEmailGroup.style.display = 'block';
+                headcount.value = '';
+                updateResidentTypeView();
+                updateHeadcount();
+                updatePetView();
             } catch (error) {
-                // This catch block should rarely be hit now since we're using no-cors
-                // But keep it for safety
                 console.error('Unexpected error:', error);
-                
-                // Even on error, if it's a certificate/network issue, data might still be saved
-                // Show a message that's less alarming
-                showMessage('Your information may have been submitted. Please check your Google Sheet to confirm. If not, please try again.', 'error');
+                showMessage('Submission failed. Please try again.', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Information';
@@ -992,12 +925,6 @@
             }
         }
 
-        function isLoginPageResponse(rawText, response) {
-            const contentType = response.headers.get('content-type') || '';
-            const lowerText = String(rawText || '').toLowerCase();
-            return contentType.includes('text/html')
-                && (lowerText.includes('sign in') || lowerText.includes('accounts.google.com'));
-        }
     </script>
 </body>
 </html>
